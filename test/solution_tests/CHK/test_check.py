@@ -77,7 +77,7 @@ class TestRunBuyXGetYFreeOffers():
         assert len(counts_per_sku) == 0
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert len(offers_ran) == 0
+        assert offers_ran == {'E': 0, 'B': 0}
 
     def test_no_matches(self):
         """
@@ -105,6 +105,19 @@ class TestRunBuyXGetYFreeOffers():
         """
         counts_per_sku = checkout_solution.build_counts_by_sku('EEEEBB')
         assert counts_per_sku == {'E': 4, 'B': 2}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'E': 4, 'B': 0}
+
+    def test_decrement_stops_at_zero(self):
+        """
+        Suppose we have an offer 'Buy 2 Es and get 1 B free' and a basket of 4 Es and 1 B.
+
+        The offer will trigger twice, but there is only 1 B in the basket to make 'free'. The count of B should be
+        decremented to zero.
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('EEEEB')
+        assert counts_per_sku == {'E': 4, 'B': 1}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
         assert offers_ran == {'E': 4, 'B': 0}
