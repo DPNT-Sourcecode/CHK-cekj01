@@ -12,7 +12,7 @@ class TestCheck():
         assert checkout_solution.checkout(1) == -1
 
     def test_unrecognised_sku_present(self):
-        assert checkout_solution.checkout('ABZ') == -1
+        assert checkout_solution.checkout('AB[') == -1
 
     def test_single_item(self):
         assert checkout_solution.checkout('A') == 50
@@ -238,4 +238,5 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
 

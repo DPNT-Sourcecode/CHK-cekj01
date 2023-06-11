@@ -105,7 +105,7 @@ def run_group_offers(counts_by_sku) -> 0:
     Note: mutates the counts_by_sku passed in, removing all items used towards offers
     """
     subtotal = 0
-    for sku_list, offer_terms in group_discount_offers:
+    for sku_list, offer_terms in group_discount_offers.items():
         amount_required = offer_terms[0]
         price = offer_terms[1]
         total_count = sum(counts_by_sku[sku] for sku in sku_list)
