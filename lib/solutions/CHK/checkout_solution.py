@@ -5,7 +5,8 @@ prices = {
     'A': 50,
     'B': 30,
     'C': 20,
-    'D': 15
+    'D': 15,
+    'E': 40
 }
 
 special_offers = {
@@ -17,6 +18,9 @@ special_offers = {
 # skus = unicode string
 
 def _build_counts_by_sku(skus: str):
+    if not type(skus) == str:
+        raise ValueError
+
     counts_per_sku = defaultdict(int)
     for sku in skus:
         if sku in prices:
@@ -28,9 +32,7 @@ def _build_counts_by_sku(skus: str):
 
 def checkout(skus):
     # String will have a letter for each occurrence of the item
-    if not type(skus) == str:
-        return -1
-
+    # UNCLEAR - does adding a free item let it apply against a discount for the added item?
     try:
         counts_per_sku = _build_counts_by_sku(skus)
     except ValueError:

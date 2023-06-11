@@ -63,4 +63,3 @@ class TestCheck():
         """
         # 5A for 200 + 3A for 130 == 330
         assert checkout_solution.checkout(8 * 'A') == 330
-
