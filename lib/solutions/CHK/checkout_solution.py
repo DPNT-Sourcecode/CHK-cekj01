@@ -41,9 +41,11 @@ def checkout(skus):
         remaining = count
         if special_offers_for_sku := special_offers.get(sku):
             for special_offer in special_offers_for_sku:
-                amount_applicable = remaining // special_offer[0]
-                total += amount_applicable * special_offer[1]
-                remaining -= amount_applicable
+                num_items_required = special_offer[0]
+                discounted_price = special_offer[1]
+                num_of_discounts = remaining // num_items_required
+                total += num_of_discounts * discounted_price
+                remaining -= num_of_discounts * num_items_required
         total += remaining * prices[sku]
 
     return total
