@@ -14,7 +14,7 @@ special_offers = {
     'B': [(2, 45)],
 }
 
-get_x_free_offers = {
+buy_x_get_y_free_offers = {
     # Item to get free, number of items required for discount, num to get free
     'E': ('B', 2, 1)
 }
@@ -22,7 +22,7 @@ get_x_free_offers = {
 # noinspection PyUnusedLocal
 # skus = unicode string
 
-def _build_counts_by_sku(skus: str):
+def build_counts_by_sku(skus: str):
     if not type(skus) == str:
         raise ValueError
 
@@ -35,12 +35,35 @@ def _build_counts_by_sku(skus: str):
     return counts_per_sku
 
 
+def run_buy_x_get_y_free_offers(counts_per_sku: dict):
+    """
+    Run all buy x get y free offers, removing the free items from the count
+    for that item.
+
+    Note - mutates the input counts
+    """
+    for item, offer in buy_x_get_y_free_offers.items():
+        count = counts_per_sku[item]
+        free_sku = offer[0]
+        num_required = offer[1]
+        num_given_free_per_occurence = offer[2]
+        num_occurences = count // num_required
+        num_free = num_given_free_per_occurence * num_occurences
+        # Even if the offer fires, can't give more for free than are actually in the basket
+        counts_per_sku[free_sku] = max(
+            0,
+            counts_per_sku[free_sku] - num_free
+        )
+    return counts_per_sku
+
 def checkout(skus):
     # String will have a letter for each occurrence of the item
     try:
-        counts_per_sku = _build_counts_by_sku(skus)
+        counts_per_sku = build_counts_by_sku(skus)
     except ValueError:
         return -1
+
+    run_buy_x_get_y_free_offers(counts_per_sku)
 
     total = 0
     for sku, count in counts_per_sku.items():

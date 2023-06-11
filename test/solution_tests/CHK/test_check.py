@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from solutions.CHK import checkout_solution
 
 
@@ -63,3 +65,46 @@ class TestCheck():
         """
         # 5A for 200 + 3A for 130 == 330
         assert checkout_solution.checkout(8 * 'A') == 330
+
+
+class TestRunBuyXGetYFreeOffers():
+
+    def test_no_items(self):
+        """
+        Smoke test to make sure everything works with an empty basket
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('')
+        assert len(counts_per_sku) == 0
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert len(offers_ran) == 0
+
+    def test_no_matches(self):
+        """
+        When there are no matches, expect the counts to remain unchanged
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('EB')
+        assert counts_per_sku == {'E': 1, 'B': 1}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'E': 1, 'B': 1}
+
+    def test_match(self):
+        """
+        When a match occurs, expect the amount of the free sku to be decremented
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('EEB')
+        assert counts_per_sku == {'E': 2, 'B': 1}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'E': 2, 'B': 0}
+
+    def test_multiple_matches(self):
+        """
+        A match on the same offer can occur multiple times, decrementing the free sku each time
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('EEEEBB')
+        assert counts_per_sku == {'E': 4, 'B': 2}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'E': 4, 'B': 0}
