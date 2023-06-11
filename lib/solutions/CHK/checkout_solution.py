@@ -49,6 +49,11 @@ def run_buy_x_get_y_free_offers(counts_per_sku: dict):
         free_sku = offer[0]
         num_required = offer[1]
         num_given_free_per_occurence = offer[2]
+        if (free_sku == item):
+            # Special case for the sku giving itself for free
+            # offer applies in groups of (amount_to_trigger + amount_to_remove)
+            # TODO - does this work for Y > 1?
+            num_required = num_required + num_given_free_per_occurence
         num_occurences = count // num_required
         num_free = num_given_free_per_occurence * num_occurences
         # Even if the offer fires, can't give more for free than are actually in the basket
