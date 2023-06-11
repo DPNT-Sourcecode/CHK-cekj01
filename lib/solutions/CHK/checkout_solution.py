@@ -71,7 +71,7 @@ def build_counts_by_sku(skus: str):
     return counts_per_sku
 
 
-def run_buy_x_get_y_free_offers(counts_per_sku: dict):
+def run_buy_x_get_y_free_offers(counts_per_sku: dict) -> dict:
     """
     Run all buy x get y free offers, removing the free items from the count
     for that item.
@@ -98,7 +98,7 @@ def run_buy_x_get_y_free_offers(counts_per_sku: dict):
     return counts_per_sku
 
 
-def run_group_offers(counts_by_sku) -> 0:
+def run_group_offers(counts_by_sku) -> int:
     """
     Run all group offers, removing SKUs used from the count. Return the subtotal for all offers applied.
 
@@ -122,15 +122,12 @@ def run_group_offers(counts_by_sku) -> 0:
     return subtotal
 
 
-def checkout(skus):
-    # String will have a letter for each occurrence of the item
-    try:
-        counts_per_sku = build_counts_by_sku(skus)
-    except ValueError:
-        return -1
+def run_x_for_y_offers(counts_per_sku):
+    """
+    Run all 'X skus for Y price' offers. Return the subtotal for all offers applied.
 
-    run_buy_x_get_y_free_offers(counts_per_sku)
-
+    Note: mutates the counts_by_sku passed in, removing all items used towards offers
+    """
     total = 0
     for sku, count in counts_per_sku.items():
         remaining = count
@@ -141,6 +138,19 @@ def checkout(skus):
                 num_of_discounts = remaining // num_items_required
                 total += num_of_discounts * discounted_price
                 remaining -= num_of_discounts * num_items_required
-        total += remaining * prices[sku]
+        counts_per_sku[sku] = remaining
+    return total
+
+
+def checkout(skus):
+    # String will have a letter for each occurrence of the item
+    try:
+        counts_per_sku = build_counts_by_sku(skus)
+    except ValueError:
+        return -1
+
+    run_buy_x_get_y_free_offers(counts_per_sku)
+    total = run_group_offers(counts_per_sku)
+    total += run_x_for_y_offers(counts_per_sku)
 
     return total

@@ -1,4 +1,4 @@
-from collections import defaultdict
+from unittest.mock import patch
 
 from solutions.CHK import checkout_solution
 
@@ -238,5 +238,33 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
+    def test_all_rules(self):
+        """
+        Final integration test checking all rules running
+        """
+        basket = (
+            8 * 'A' +
+            2 * 'B' +
+            3 * 'E' +
+            4 * 'F' +
+            2 * 'X' +
+            2 * 'Y'
+        )
+
+        # Free items offer are applied first:
+        # - 2 Fs give 1 free F
+        # - 2 Es give a free B
+        # Basket: 8A, B, 3E, 3F, 2X, 2Y
+        # Then group offers - Applies on X and Y in groups of 3
+        # Basket: 8A, B, 3E, 3F, Y, subtotal: 45
+        # Then x for Y offers:
+        # - A: 5 for 200 then 3 for 130
+        # - B: not applied as with 1 B already removed, only 1 remains
+        # Basket:  B, 3E, 3F, Y, subtotal: 45 + 200 + 130 = 375
+        # Then add all remaining values for total
+        # 30 + 120 + 30 + 20 == 200
+        # Final total 575
+        assert checkout_solution.checkout(basket) == 575
 
 
