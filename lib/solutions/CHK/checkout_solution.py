@@ -41,6 +41,11 @@ special_offers = {
     'V': [(3, 130), (2, 90)],
 }
 
+group_discount_offers = {
+    # Match any combination of the skus in the key such that X of them gives Y price, value being (X, Y)
+    ('S', 'T', 'X', 'Y', 'Z'): (3, 45)
+}
+
 buy_x_get_y_free_offers = {
     # Item to get free, number of items required for discount, num to get free
     'E': ('B', 2, 1),
@@ -83,14 +88,39 @@ def run_buy_x_get_y_free_offers(counts_per_sku: dict):
             # offer applies in groups of (amount_to_trigger + amount_to_remove)
             # TODO - does this work for Y > 1?
             num_required = num_required + num_given_free_per_occurence
-        num_occurences = count // num_required
-        num_free = num_given_free_per_occurence * num_occurences
+        num_occurrences = count // num_required
+        num_free = num_given_free_per_occurence * num_occurrences
         # Even if the offer fires, can't give more for free than are actually in the basket
         counts_per_sku[free_sku] = max(
             0,
             counts_per_sku[free_sku] - num_free
         )
     return counts_per_sku
+
+
+def run_group_offers(counts_by_sku) -> 0:
+    """
+    Run all group offers, removing SKUs used from the count. Return the subtotal for all offers applied.
+
+    Note: mutates the counts_by_sku passed in, removing all items used towards offers
+    """
+    subtotal = 0
+    for sku_list, offer_terms in group_discount_offers:
+        amount_required = offer_terms[0]
+        price = offer_terms[1]
+        total_count = sum(counts_by_sku[sku] for sku in sku_list)
+        total_offers = total_count // amount_required
+        total_items_to_remove = total_offers * amount_required
+        for sku in sku_list:
+            remaining = counts_by_sku[sku]
+            amount_to_remove = min(total_items_to_remove, remaining)
+            counts_by_sku[sku] -= amount_to_remove
+            total_items_to_remove -= amount_to_remove
+
+        subtotal += price * total_offers
+
+    return subtotal
+
 
 def checkout(skus):
     # String will have a letter for each occurrence of the item

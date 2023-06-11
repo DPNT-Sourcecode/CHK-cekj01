@@ -67,10 +67,11 @@ class TestCheck():
         assert checkout_solution.checkout(8 * 'A') == 330
 
 
-class TestRunBuyXGetYFreeOffers():
+def _remove_zero_skus(counts_per_sku):
+    return {k: v for k, v in counts_per_sku.items() if v > 0}
 
-    def _remove_zero_skus(self, counts_per_sku):
-        return {k: v for k, v in counts_per_sku.items() if v > 0}
+
+class TestRunBuyXGetYFreeOffers():
 
     def test_no_items(self):
         """
@@ -80,7 +81,7 @@ class TestRunBuyXGetYFreeOffers():
         assert len(counts_per_sku) == 0
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {}
+        assert _remove_zero_skus(offers_ran) == {}
 
     def test_no_matches(self):
         """
@@ -90,7 +91,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 1, 'B': 1}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'E': 1, 'B': 1}
+        assert _remove_zero_skus(offers_ran) == {'E': 1, 'B': 1}
 
     def test_match(self):
         """
@@ -100,7 +101,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 2, 'B': 1}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'E': 2}
+        assert _remove_zero_skus(offers_ran) == {'E': 2}
 
     def test_multiple_matches(self):
         """
@@ -110,7 +111,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 4, 'B': 2}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'E': 4}
+        assert _remove_zero_skus(offers_ran) == {'E': 4}
 
     def test_decrement_stops_at_zero(self):
         """
@@ -123,7 +124,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 4, 'B': 1}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'E': 4}
+        assert _remove_zero_skus(offers_ran) == {'E': 4}
 
     def test_x_and_y_are_same_sku(self):
         """
@@ -134,7 +135,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'F': 3}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'F': 2}
+        assert _remove_zero_skus(offers_ran) == {'F': 2}
 
     def test_x_and_y_same_multiple_applications(self):
         """
@@ -147,7 +148,36 @@ class TestRunBuyXGetYFreeOffers():
 
         # Remove an F on first run, second time there isn't one to remove
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'F': 4}
+        assert _remove_zero_skus(offers_ran) == {'F': 4}
+
+
+class TestGroupDiscountOffers():
+
+    def test_empty_basket(self):
+        """
+        Smoke test checking that the logic runs with an empty basket and
+        returns 0 as a subtotal
+        """
+        counts_by_sku = checkout_solution.build_counts_by_sku('')
+        assert len(counts_by_sku) == 0
+
+        result = checkout_solution.run_group_offers(counts_by_sku)
+        assert result == 0
+        assert len(_remove_zero_skus(counts_by_sku)) == 0
+
+    def test_no_matches(self):
+        """
+        When there are no matches expect a zero subtotal and the basket to remain unchanged
+        """
+        
+
+    def test_group_offer_applied_all_one_sku(self):
+        pass
+
+    def test_group_offer_multiple_skus(self):
+        pass
+
+    def test_multiple_applications(self):
 
 
 class TestOffersIntegration():
@@ -168,3 +198,4 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
