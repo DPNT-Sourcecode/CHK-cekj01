@@ -7,4 +7,3 @@ class TestSum():
 
     def test_sum_min_values(self):
         assert sum_solution.compute(0, 0) == 0
-
