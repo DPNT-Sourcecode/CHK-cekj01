@@ -14,6 +14,11 @@ special_offers = {
     'B': [(2, 45)],
 }
 
+get_x_free_offers = {
+    # Item to get free, number of items required for discount, num to get free
+    'E': ('B', 2, 1)
+}
+
 # noinspection PyUnusedLocal
 # skus = unicode string
 
@@ -32,7 +37,6 @@ def _build_counts_by_sku(skus: str):
 
 def checkout(skus):
     # String will have a letter for each occurrence of the item
-    # UNCLEAR - does adding a free item let it apply against a discount for the added item?
     try:
         counts_per_sku = _build_counts_by_sku(skus)
     except ValueError:
