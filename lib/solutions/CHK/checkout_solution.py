@@ -114,5 +114,3 @@ def checkout(skus):
         total += remaining * prices[sku]
 
     return total
-
-

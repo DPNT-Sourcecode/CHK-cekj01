@@ -168,5 +168,3 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
-
-
