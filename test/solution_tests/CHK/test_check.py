@@ -23,4 +23,3 @@ class TestCheck():
 
     def test_special_offer_hits_multiple_times(self):
         assert checkout_solution.checkout('AAAAAAA') == 310
-
