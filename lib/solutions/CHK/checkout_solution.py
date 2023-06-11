@@ -9,8 +9,8 @@ prices = {
 }
 
 special_offers = {
-    'A': (3, 130),
-    'B': (2, 45)
+    'A': [(5, 200), (3, 130)],
+    'B': [(2, 45)],
 }
 
 # noinspection PyUnusedLocal
@@ -29,8 +29,14 @@ def checkout(skus):
 
     total = 0
     for sku, count in counts_per_sku.items():
-        if special_offer := special_offers.get(sku):
-            total += (count // special_offer[0]) * special_offer[1]
+        if special_offers_for_sku := special_offers.get(sku):
+            remaining = count
+            subtotal = 0
+            for special_offer in special_offers_for_sku:
+                amount_applicable = remaining // special_offer[0]
+                subtotal += amount_applicable * special_offer[1]
+                remaining -= amount_applicable
+
             total += (count % special_offer[0]) * prices[sku]
         else:
             total += count * prices[sku]
