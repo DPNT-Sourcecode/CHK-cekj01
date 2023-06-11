@@ -29,11 +29,12 @@ def checkout(skus):
 
     total = 0
     for sku, count in counts_per_sku.items():
-        if special_offer := special_offers.get('SKU'):
+        if special_offer := special_offers.get(sku):
             total += (count // special_offer[0]) * special_offer[1]
             total += (count % special_offer[0]) * prices[sku]
         else:
             total += count * prices[sku]
 
     return total
+
 
