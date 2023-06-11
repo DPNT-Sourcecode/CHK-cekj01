@@ -17,6 +17,9 @@ special_offers = {
 # skus = unicode string
 def checkout(skus):
     # String will have a letter for each occurrence of the item
+    if not skus or not type(skus) == str:
+        return -1
+
     counts_per_sku = defaultdict(int)
     for sku in skus:
         if sku in prices:
@@ -25,6 +28,12 @@ def checkout(skus):
             return -1
 
     total = 0
-    for sku, count in counts_per_sku:
+    for sku, count in counts_per_sku.items():
         if special_offer := special_offers.get('SKU'):
-            total += (count / )
+            total += (count // special_offer[0]) * special_offer[1]
+            total += (count % special_offer[0]) * prices[sku]
+        else:
+            total += count * prices[sku]
+
+    return total
+
