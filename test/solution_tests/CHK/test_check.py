@@ -169,16 +169,52 @@ class TestGroupDiscountOffers():
         """
         When there are no matches expect a zero subtotal and the basket to remain unchanged
         """
-        
+        counts_by_sku = checkout_solution.build_counts_by_sku('ABC')
+        assert counts_by_sku == {'A': 1, 'B': 1, 'C': 1}
+
+        result = checkout_solution.run_group_offers(counts_by_sku)
+        assert result == 0
+        assert _remove_zero_skus(counts_by_sku)  == {'A': 1, 'B': 1, 'C': 1}
 
     def test_group_offer_applied_all_one_sku(self):
-        pass
+        """
+        Test application of the group offer with all of the SKUs being the same.
+        Expect the subtotal to be the offer amount and the basket to be cleared of the items used to apply the discount
+        """
+        counts_by_sku = checkout_solution.build_counts_by_sku('SSSS')
+        assert counts_by_sku == {'S': 4}
+
+        result = checkout_solution.run_group_offers(counts_by_sku)
+        assert result == 45
+        assert _remove_zero_skus(counts_by_sku) == {'S': 1}
 
     def test_group_offer_multiple_skus(self):
-        pass
+        """
+        Test application of the group off where the group is made of multiple skus.
+
+        In this case, we expect that the SKUs are used up alphabetically. E.g. if the group is ('S','T', 'X')
+        we would expect all S values to be used, then T, then X until no more offers can be applied
+
+        Expect the subtotal to be the offer amount and that items used are removed from the basket
+        """
+        counts_by_sku = checkout_solution.build_counts_by_sku('STXS')
+        assert counts_by_sku == {'S': 2, 'T': 1, 'X': 1}
+
+        result = checkout_solution.run_group_offers(counts_by_sku)
+        assert result == 45
+        assert _remove_zero_skus(counts_by_sku) == {'X': 1}
 
     def test_multiple_applications(self):
+        """
+        Test applying the offer multiple times. Removal of items and ordering of removal should be respected as in
+        previous test cases.
+        """
+        counts_by_sku = checkout_solution.build_counts_by_sku('SSSXXTTXYY')
+        assert counts_by_sku == {'S': 2, 'T': 1, 'X': 1}
 
+        result = checkout_solution.run_group_offers(counts_by_sku)
+        assert result == 45
+        assert _remove_zero_skus(counts_by_sku) == {'X': 1}
 
 class TestOffersIntegration():
     """
@@ -198,4 +234,3 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
-
