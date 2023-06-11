@@ -122,6 +122,29 @@ class TestRunBuyXGetYFreeOffers():
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
         assert offers_ran == {'E': 4, 'B': 0}
 
+    def test_x_and_y_are_same_sku(self):
+        """
+        It should be possible to have X and Y be the same sku, e.g.
+        'Buy 2 Fs and get an F free'
+        """
+        counts_per_sku = checkout_solution.build_counts_by_sku('FFF')
+        assert counts_per_sku == {'F': 3}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'F': 2}
+
+    def test_x_and_y_same_multiple_applications(self):
+        """
+        When X and Y are the same, we are decrementing the same SKU we are counting. Each application of the offer
+        must consider the total count to be the previously decremented value.
+
+        """
+        # Test triggering multiple times
+        counts_per_sku = checkout_solution.build_counts_by_sku('FFF')
+        assert counts_per_sku == {'F': 3}
+
+        offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
+        assert offers_ran == {'F': 2}
 
 class TestOffersIntegration():
     """
@@ -141,4 +164,5 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
 

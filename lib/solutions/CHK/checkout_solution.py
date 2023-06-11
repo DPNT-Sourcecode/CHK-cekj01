@@ -6,7 +6,8 @@ prices = {
     'B': 30,
     'C': 20,
     'D': 15,
-    'E': 40
+    'E': 40,
+    'F': 10
 }
 
 special_offers = {
@@ -16,7 +17,8 @@ special_offers = {
 
 buy_x_get_y_free_offers = {
     # Item to get free, number of items required for discount, num to get free
-    'E': ('B', 2, 1)
+    'E': ('B', 2, 1),
+    'F': ('F', 2, 1),
 }
 
 # noinspection PyUnusedLocal
