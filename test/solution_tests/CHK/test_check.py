@@ -193,7 +193,7 @@ class TestGroupDiscountOffers():
         Test application of the group off where the group is made of multiple skus.
 
         In this case, we expect that the SKUs are used up in the order specified in the config.
-        E.g. if the group is ('S','T', 'X') we would expect all S values to be used, then T, then X until no more
+        E.g. if the group is ('S','T','X') we would expect all S values to be used, then T, then X until no more
         offers can be applied.
 
         Expect the subtotal to be the offer amount and that items used are removed from the basket
@@ -217,7 +217,7 @@ class TestGroupDiscountOffers():
         result = checkout_solution.run_group_offers(counts_by_sku)
         assert result == 135
         # Used SSS, TT, XXX, Y
-        assert _remove_zero_skus(counts_by_sku) == {'Y': 1}
+        assert _remove_zero_skus(counts_by_sku) == {'X': 1}
 
 
 class TestOffersIntegration():
@@ -256,13 +256,13 @@ class TestOffersIntegration():
         # - 2 Fs give 1 free F
         # - 2 Es give a free B
         # Basket: 8A, B, 3E, 3F, 2X, 2Y
-        # Then group offers - Applies on X and Y in groups of 3
-        # Basket: 8A, B, 3E, 3F, Y, subtotal: 45
-        # Then x for Y offers:
+        # Then group offers - Applies on X and Y in groups of 3, with Y before X
+        # Basket: 8A, B, 3E, 3F, X, subtotal: 45
+        # Then x for y offers:
         # - A: 5 for 200 then 3 for 130
         # - B: not applied as with 1 B already removed, only 1 remains
         # Basket:  B, 3E, 3F, Y, subtotal: 45 + 200 + 130 = 375
         # Then add all remaining values for total
-        # 30 + 120 + 30 + 20 == 200
-        # Final total 575
-        assert checkout_solution.checkout(basket) == 575
+        # 30 + 120 + 30 + 17 == 200
+        # Final total 572
+        assert checkout_solution.checkout(basket) == 572
