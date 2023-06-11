@@ -31,14 +31,23 @@ prices = {
 }
 
 special_offers = {
+    # Each tuple is (number of items, discounted price)
     'A': [(5, 200), (3, 130)],
     'B': [(2, 45)],
+    'H': [(10, 80), (5, 45)],
+    'K': [(2, 150)],
+    'P': [(5, 200)],
+    'Q': [(3, 80)],
+    'V': [(3, 130), (2, 90)],
 }
 
 buy_x_get_y_free_offers = {
     # Item to get free, number of items required for discount, num to get free
     'E': ('B', 2, 1),
     'F': ('F', 2, 1),
+    'N': ('M', 3, 1),
+    'R': ('Q', 3, 1),
+    'U': ('U', 3, 1),
 }
 
 # noinspection PyUnusedLocal
@@ -105,4 +114,5 @@ def checkout(skus):
         total += remaining * prices[sku]
 
     return total
+
 
