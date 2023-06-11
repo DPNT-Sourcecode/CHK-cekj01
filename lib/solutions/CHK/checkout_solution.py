@@ -17,7 +17,7 @@ special_offers = {
 # skus = unicode string
 def checkout(skus):
     # String will have a letter for each occurrence of the item
-    if not skus or not type(skus) == str:
+    if not type(skus) == str:
         return -1
 
     counts_per_sku = defaultdict(int)
@@ -36,5 +36,6 @@ def checkout(skus):
             total += count * prices[sku]
 
     return total
+
 
 
