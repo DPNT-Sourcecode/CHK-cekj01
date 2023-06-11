@@ -110,7 +110,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 4, 'B': 2}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran == {'E': 4})
+        assert self._remove_zero_skus(offers_ran) == {'E': 4}
 
     def test_decrement_stops_at_zero(self):
         """
@@ -123,7 +123,7 @@ class TestRunBuyXGetYFreeOffers():
         assert counts_per_sku == {'E': 4, 'B': 1}
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert self._remove_zero_skus(offers_ran) == {'E': 4, 'B': 0}
+        assert self._remove_zero_skus(offers_ran) == {'E': 4}
 
     def test_x_and_y_are_same_sku(self):
         """
@@ -168,4 +168,5 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
 
