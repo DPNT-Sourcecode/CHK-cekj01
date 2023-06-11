@@ -77,7 +77,7 @@ class TestRunBuyXGetYFreeOffers():
         assert len(counts_per_sku) == 0
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert offers_ran == {'E': 0, 'B': 0}
+        assert offers_ran == {}
 
     def test_no_matches(self):
         """
@@ -137,14 +137,15 @@ class TestRunBuyXGetYFreeOffers():
         """
         When X and Y are the same, we are decrementing the same SKU we are counting. Each application of the offer
         must consider the total count to be the previously decremented value.
-
         """
-        # Test triggering multiple times
-        counts_per_sku = checkout_solution.build_counts_by_sku('FFF')
-        assert counts_per_sku == {'F': 3}
+        # Doesn't really make sense with the 2 for 1 - fix by having config injected when required
+        counts_per_sku = checkout_solution.build_counts_by_sku('FFFFF')
+        assert counts_per_sku == {'F': 5}
 
+        # Remove an F on first run, second time there isn't one to remove
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
-        assert offers_ran == {'F': 2}
+        assert offers_ran == {'F': 4}
+
 
 class TestOffersIntegration():
     """
@@ -164,5 +165,3 @@ class TestOffersIntegration():
         - With 1 B left not affected, it is added at it's normal cost
         """
         assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
-
-
