@@ -43,7 +43,7 @@ special_offers = {
 
 group_discount_offers = {
     # Match any combination of the skus in the key such that X of them gives Y price, value being (X, Y)
-    ('S', 'T', 'X', 'Y', 'Z'): (3, 45)
+    ('Z', 'S', 'T', 'Y', 'X'): (3, 45)
 }
 
 buy_x_get_y_free_offers = {
