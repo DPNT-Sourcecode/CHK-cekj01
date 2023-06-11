@@ -266,5 +266,3 @@ class TestOffersIntegration():
         # 30 + 120 + 30 + 20 == 200
         # Final total 575
         assert checkout_solution.checkout(basket) == 575
-
-
