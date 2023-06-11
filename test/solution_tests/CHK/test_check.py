@@ -121,3 +121,24 @@ class TestRunBuyXGetYFreeOffers():
 
         offers_ran = checkout_solution.run_buy_x_get_y_free_offers(counts_per_sku)
         assert offers_ran == {'E': 4, 'B': 0}
+
+
+class TestOffersIntegration():
+    """
+    Complex test cases involving multiple test schemes and how they interact
+    """
+    # Refactor this later as new offers break out into their own method
+
+    def test_free_items_applied_before_other_discounts(self):
+        """
+        Any offer which gives free items should be applied first. Once an item is considered 'free' it should
+        no longer contribute to the cost nor to any further discounts on that sku. E.g. if we have
+        - 'Buy 2 Es and get 1 B free' and
+        - '2 Bs for 45'
+        Given a basket of 4 Es and 3 Bs, this should apply as follows:
+        - 'Buy 2 Es and get 1 B free' triggers twice, effectively removing 2 Bs from the cost and stopping them counting
+          towards any further discounts
+        - With 1 B left not affected, it is added at it's normal cost
+        """
+        assert checkout_solution.checkout('EEEEBBB') == (4 * 40) + 30
+
